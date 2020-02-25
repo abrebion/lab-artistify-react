@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 // custom tools
 import apiHandler from "../api/APIHandler";
 import CardAlbum from "../components/card/CardAlbum";
@@ -16,8 +16,43 @@ export default function Artist({ match }) {
   const userContext = useContext(UserContext);
   const { currentUser } = userContext;
 
+  const [artistAvgScore, setArtistAvgScore] = useState(0);
+
+  function getAvgScore(obj) {
+    const avgScore =
+      obj.reduce((acc, el) => {
+        return (acc += el.rate);
+      }, 0) / obj.length;
+    return isNaN(avgScore) ? 0 : avgScore;
+  }
+
+  useEffect(() => {
+    apiHandler
+      .get("/artists/" + match.params.id)
+      .then(res => {
+        // const avgScore = getAvgScore(res.data.rates);
+        setArtistAvgScore(getAvgScore(res.data.rates));
+      })
+      .catch(err => {
+        console.error(err);
+      });
+  }, []);
+
+  const handleVote = () => {
+    apiHandler
+      .patch("/artists/" + match.params.id, {})
+      .then(res => {})
+      .catch(err => {
+        console.error(err);
+      });
+  };
+
   return (
     <>
+      <Stars mode="display" avgRate={artistAvgScore} />
+      <br></br>
+      <Stars mode="vote" clbk={handleVote} css="user stars" />
+
       <h1 className="title diy">DIY</h1>
       <p>
         Use the image below to code the {`<Artist />`} component.
