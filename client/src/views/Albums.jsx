@@ -19,38 +19,12 @@ export default function Albums() {
     return () => {};
   }, []);
 
+  // console.log("Albums", albums);
+
   return (
     <React.Fragment>
-      <h1 className="title diy">D.I.Y</h1>
-      <p>
-        Fetch all Albums from the database.
-        <br />
-        Display a card for each album.
-        <br />
-        Provide a router {`<Link>`} to="albums/album.id",
-        <br />
-        leading to separate Album (details) component.
-        <br />
-        If the albums list is empty, provide a default view.
-      </p>
-      <h1 className="title diy">D.I.Y</h1>
-      <p>
-        Import a custom {`<IconFavorite />`} on each album card.
-        <br />
-        When clicked, send an axios.patch request to add the album to the
-        user's favorites.
-      </p>
-
-      <LabPreview name="albums" />
-
-      <hr />
       <h1 className="title">All albums</h1>
-      <List
-        data={albums}
-        Component={CardAlbum}
-        cssList="cards"
-        cssItem="card album"
-      />
+      <List data={albums} Component={CardAlbum} cssList="cards" cssItem="card album" />
     </React.Fragment>
   );
 }

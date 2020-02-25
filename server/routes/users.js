@@ -32,23 +32,24 @@ router.get("/users/:id/favorites", async (req, res, next) => {
 });
 
 router.patch("/users/favorites/:resourceType/:id", async (req, res, next) => {
+  // console.log("Current user >>>>", req.user);
+
   const mongoQuery = {};
-  mongoQuery["_id"] = "5e54d6d970e4da479fa1497d";
+  mongoQuery["_id"] = req.user._id;
   mongoQuery["favorites." + req.params.resourceType] = { $in: [req.params.id] };
   try {
-    console.log("Mongo query", mongoQuery);
+    // console.log("Mongo query", mongoQuery);
     const isAlreadyFavorite = await userModel.find(mongoQuery);
-    console.log("Number of results:", isAlreadyFavorite.length, "\n", isAlreadyFavorite);
+
     let toggleFavoriteQuery = {};
     toggleFavoriteQuery["favorites." + req.params.resourceType] = req.params.id;
+
     if (isAlreadyFavorite.length) {
-      console.log("------Already in favorites-----\n");
-      await userModel.findByIdAndUpdate("5e54d6d970e4da479fa1497d", { $pull: toggleFavoriteQuery });
-      res.status(200).json({ isFavorite: false, resource_id: req.params.id, resource_tyoe: req.params.resourceType });
+      const updatedUser = await userModel.findByIdAndUpdate(req.user._id, { $pull: toggleFavoriteQuery }, { new: true });
+      res.status(200).json({ user: updatedUser });
     } else {
-      console.log("------Added to favorites-----\n");
-      await userModel.findByIdAndUpdate("5e54d6d970e4da479fa1497d", { $push: toggleFavoriteQuery });
-      res.status(200).json({ isFavorite: true, resource_id: req.params.id, resource_tyoe: req.params.resourceType });
+      const updatedUser = await userModel.findByIdAndUpdate(req.user._id, { $push: toggleFavoriteQuery }, { new: true });
+      res.status(200).json({ user: updatedUser });
     }
   } catch (dbErr) {
     next(dbErr);

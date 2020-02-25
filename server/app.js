@@ -7,7 +7,7 @@ const express = require("express");
 const session = require("express-session"); //sessions make data persist between http calls
 const passport = require("passport"); // auth library (needs sessions)
 const cors = require("cors");
-const _DEVMODE = false;
+const _DEVMODE = true;
 
 // ------------------------------------------
 // SERVER CONFIG
@@ -30,7 +30,7 @@ app.use(express.json());
 
 /*
 Create a session middleware with the given options.
-Note:  Session data is not saved in the cookie itself, just the session ID. 
+Note:  Session data is not saved in the cookie itself, just the session ID.
 Session data is stored server-side.
 */
 app.use(
@@ -61,23 +61,30 @@ app.use(passport.session());
 // Check Loggedin Users
 // ------------------------------------------
 if (_DEVMODE === true) {
-  app.use(function devMode(req, res, next) {
+  app.use(async function devMode(req, res, next) {
+    const userModel = require("./models/User");
+    try {
+      const user = await userModel.findOne();
+      req.user = user;
+      console.log(req.user);
+      next();
+    } catch (err) {
+      next(err);
+    }
+    /*
     req.user = {
-      _id: "5de9c376fa023e21a766a606",
-      username: "guillaume",
-      email: "gui@foo.bar",
-      avatar:
-        "https://res.cloudinary.com/gdaconcept/image/upload/v1575298339/user-pictures/jadlcjjnspfhknucjfkd.png",
+      _id: "5e54d6d970e4da479fa1497d",
+      username: "admin",
+      email: "admin@artistify.io",
+      avatar: "https://res.cloudinary.com/gdaconcept/image/upload/v1575298339/user-pictures/jadlcjjnspfhknucjfkd.png",
       role: "admin",
       favorites: {
-        artists: ["5ded0f32701e2f8732a0513c"],
+        artists: ["5e54d4367dfebd462e333413", "5e54d42a7dfebd462e333412", "5e54d41f7dfebd462e333411"],
         albums: ["5ded24e254c2839b2badf011"],
         styles: [],
         labels: []
       }
-    };
-
-    next();
+    }; */
   });
 }
 
