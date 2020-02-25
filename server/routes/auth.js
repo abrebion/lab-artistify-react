@@ -41,6 +41,7 @@ router.post("/signup", uploader.single("avatar"), (req, res, next) => {
     email,
     password: hashPass
   };
+  console.log(">>>>>>>" + newUser)
 
   // check if an avatar FILE has been posted
   if (req.file) newUser.avatar = req.file.secure_url;
@@ -48,6 +49,7 @@ router.post("/signup", uploader.single("avatar"), (req, res, next) => {
   userModel
     .create(newUser)
     .then(newUserFromDB => {
+      console.log("newly created user", newUserFromDB)
       res.status(200).json({msg: "signup ok"});
     })
     .catch(err => {
