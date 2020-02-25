@@ -11,12 +11,27 @@ import "./../../styles/icon-avatar.css";
 
 function FormAlbum ({ mode = "create", _id, history, match}) {
 const [artists, setArtists] = useState([]);
-const [{cover, release, artist, description}, setFormData] = useState({
+const [labels, setLabels] = useState([]);
+const [{title, cover, release, artist, description, label}, setFormData] = useState({
 cover:"",
+title:"",
 release:"",
 artist:"",
-description:""
+description:"",
+label:""
 });
+
+function fetchLabels(){
+  apiHandler
+    .get("/labels")
+    .then(res => {
+      setLabels(res.data.labels);
+    })
+    .catch(err => {
+      console.error(err);
+    });
+}
+
 
 function fetchArtists() {
   apiHandler
@@ -31,6 +46,7 @@ function fetchArtists() {
 
 useEffect(() => {
   fetchArtists();
+  fetchLabels();
   if (mode === "edit") {
     apiHandler
       .get("/albums/" + _id)
@@ -53,7 +69,9 @@ const submitHandler = e => {
       cover,
       release,
       artist,
-      description
+      description,
+      title,
+      label
     }) 
     .then (res => {
       history.push("/admin/albums")
@@ -68,7 +86,9 @@ const submitHandler = e => {
       cover,
       release,
       artist,
-      description
+      description,
+      title,
+      label
     })
     .then(res => {
       history.push("/admin/albums");
@@ -81,21 +101,33 @@ const submitHandler = e => {
 
 const inputHandler = e => {
   let value = e.target.value;
+  setFormData({ title, label, cover, release, artist, description, [e.target.name]: value });
+
 }
   // render() {
     return (
     <div>
       <form onSubmit={submitHandler} onChange={inputHandler}>
+      <label htmlFor="title">Title</label>
+      <input name="title" type="text" value={title} />
       <label htmlFor="cover">Cover</label>
-      <input type="text" name="cover"/>
+      <input type="text" name="cover" value={cover}/>
       <label htmlFor="release">Release Date</label>
-      <input type="text" name="release"/>
+      <input type="text" name="release" value={release}/>
       <label htmlFor="artist"> Artist</label>
-      <select name="artist" id="artist"></select>  
+      <select value={artist} name="artist" id="artist">
+        {artists.map((el, i) => (
+          <option key={i} value={el._id}>{el.name}</option>
+          ))}
+      </select>  
       <label htmlFor="label">Label</label>
-      <select name="label" id="label"></select>  
+      <select value={label} name="label" id="label">
+      {labels.map((el, i) => (
+          <option key={i} value={el._id}>{el.name}</option>
+          ))}
+      </select>  
       <label htmlFor="description">Description</label>
-      <input type="text" name="description" id="description"/>
+      <input type="text" name="description" id="description" value={description}/>
       <button>{mode === "create" ? "Create" : "Update"}</button>
 
       </form>
@@ -103,5 +135,6 @@ const inputHandler = e => {
     );
   }
 // }
+
 
 export default withRouter(FormAlbum);
