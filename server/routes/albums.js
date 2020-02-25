@@ -10,7 +10,7 @@ const uploader = require("./../config/cloudinary");
 const getAverageRate = async idAlbum => {
   // use agregate features @ mongo db to code this feature
   // https://docs.mongodb.com/manual/aggregation/
-  res.status(200).json({ msg: "@todo" })
+  res.status(200).json({ msg: "@todo" });
 };
 
 router.get("/albums", (req, res, next) => {
@@ -35,7 +35,7 @@ router.get("/albums", (req, res, next) => {
     .sort(sortQ) // the provided sort query comes into action here
     .limit(limitQ) // same thing for the limit query
     .then(async albums => {
-      // AVG : things are getting tricky here ! :) 
+      // AVG : things are getting tricky here ! :)
       // the following map is async, updating each artist with an avg rate
       const albumsWithRatesAVG = await Promise.all(
         albums.map(async album => {
@@ -52,20 +52,50 @@ router.get("/albums", (req, res, next) => {
     .catch(next);
 });
 
-router.get("/albums/:id", (req, res, next) => {
-  res.status(200).json({ msg: "@todo" })
+router.get("/albums/:id", async (req, res, next) => {
+  try {
+    const album = await albumModel.findById(req.params.id);
+    res.status(200).json(album);
+  } catch (error) {
+    res.status(500).json(album);
+  }
 });
 
-router.post("/albums", uploader.single("cover"), (req, res, next) => {
-  res.status(200).json({ msg: "@todo" })
+router.post("/albums", uploader.single("cover"), async (req, res, next) => {
+  try {
+    const album = await albumModel.create(req.body);
+    res.status(200).json(album);
+  } catch (error) {
+    res.status(500).json(error);
+  }
 });
 
-router.patch("/albums/:id", uploader.single("cover"), (req, res, next) => {
-  res.status(200).json({ msg: "@todo" })
-});
+router.patch(
+  "/albums/:id",
+  uploader.single("cover"),
+  async (req, res, next) => {
+    try {
+      const album = await albumModel.findByIdAndUpdate(
+        req.params.id,
+        req.body,
+        { new: true }
+      );
+      res.status(200).json(album);
+    }
+    catch (error) {
+      res.status(500).json(error)
+    }
+  }
+);
 
-router.delete("/albums/:id", (req, res, next) => {
-  res.status(200).json({ msg: "@todo" })
+router.delete("/albums/:id", async (req, res, next) => {
+  try {  
+    const album = await albumModel.findByIdAndDelete(req.params.id);
+    res.status(200).json({ message: "Album deleted" });
+}
+catch(error) {
+  res.status(500).json({message : error});
+}
 });
 
 module.exports = router;
