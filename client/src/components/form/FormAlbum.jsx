@@ -12,15 +12,12 @@ import "./../../styles/icon-avatar.css";
 function FormAlbum({ mode = "create", _id, history, match }) {
   const [artists, setArtists] = useState([]);
   const [labels, setLabels] = useState([]);
-  const [
-    { title, cover, release, artist, description, label },
-    setFormData
-  ] = useState({
-    cover: "",
+  const [{ title, cover, releaseDate, artist, description, label }, setFormData] = useState({
     title: "",
-    release: "",
-    artist: "",
     description: "",
+    cover: "",
+    releaseDate: "",
+    artist: "",
     label: ""
   });
 
@@ -67,11 +64,11 @@ function FormAlbum({ mode = "create", _id, history, match }) {
     if (mode === "create") {
       apiHandler
         .post("/albums", {
-          cover,
-          release,
-          artist,
-          description,
           title,
+          description,
+          cover,
+          releaseDate,
+          artist,
           label
         })
         .then(res => {
@@ -83,11 +80,11 @@ function FormAlbum({ mode = "create", _id, history, match }) {
     } else {
       apiHandler
         .patch("/albums/" + _id, {
-          cover,
-          release,
-          artist,
-          description,
           title,
+          description,
+          cover,
+          releaseDate,
+          artist,
           label
         })
         .then(res => {
@@ -101,15 +98,7 @@ function FormAlbum({ mode = "create", _id, history, match }) {
 
   const inputHandler = e => {
     let value = e.target.value;
-    setFormData({
-      title,
-      label,
-      cover,
-      release,
-      artist,
-      description,
-      [e.target.name]: value
-    });
+    setFormData({ title, label, cover, releaseDate, artist, description, [e.target.name]: value });
   };
   // render() {
   return (
@@ -119,10 +108,11 @@ function FormAlbum({ mode = "create", _id, history, match }) {
         <input name="title" type="text" value={title} />
         <label htmlFor="cover">Cover</label>
         <input type="text" name="cover" value={cover} />
-        <label htmlFor="release">Release Date</label>
-        <input type="date" id="release" name="release" value={release} />
+        <label htmlFor="releaseDate">Release Date</label>
+        <input type="date" name="releaseDate" value={releaseDate || ""} />
         <label htmlFor="artist"> Artist</label>
         <select value={artist} name="artist" id="artist">
+          <option>Choose an artist...</option>
           {artists.map((el, i) => (
             <option key={i} value={el._id}>
               {el.name}
@@ -131,6 +121,7 @@ function FormAlbum({ mode = "create", _id, history, match }) {
         </select>
         <label htmlFor="label">Label</label>
         <select value={label} name="label" id="label">
+          <option>Choose a style...</option>
           {labels.map((el, i) => (
             <option key={i} value={el._id}>
               {el.name}
@@ -138,12 +129,7 @@ function FormAlbum({ mode = "create", _id, history, match }) {
           ))}
         </select>
         <label htmlFor="description">Description</label>
-        <input
-          type="text"
-          name="description"
-          id="description"
-          value={description}
-        />
+        <input type="text" name="description" id="description" value={description} />
         <button>{mode === "create" ? "Create" : "Update"}</button>
       </form>
     </div>

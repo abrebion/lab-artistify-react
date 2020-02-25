@@ -66,7 +66,7 @@ if (_DEVMODE === true) {
     try {
       const user = await userModel.findOne();
       req.user = user;
-      console.log(req.user);
+      // console.log(req.user);
       next();
     } catch (err) {
       next(err);
