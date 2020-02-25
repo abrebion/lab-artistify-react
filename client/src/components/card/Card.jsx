@@ -1,9 +1,5 @@
-import React from 'react'
+import React from "react";
 
-export default function Card() {
-    return (
-        <div>
-            TODO@gui : generic component using children prop
-        </div>
-    )
+export default function Card({ children }) {
+  return <div className="card">{children}</div>;
 }

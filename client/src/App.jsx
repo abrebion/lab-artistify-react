@@ -42,27 +42,18 @@ export default function App() {
 
   const handleSearchResults = results => {
     if (!results) return setSearchResults([]);
-    if (results.albums.length || results.artists.length)
-      return setSearchResults(results);
+    if (results.albums.length || results.artists.length) return setSearchResults(results);
   };
 
   return (
     // the context provider will make currentUser informations down the component tree
     // check src/auth/UserContext
     <UserContext.Provider value={UserContextValue}>
-      {isLoading ? (
-        null
-      ) : (
+      {isLoading ? null : (
         <React.Fragment>
-          <HeaderMain
-            navMobileClbk={handleNavMobileStatus}
-            searchClbk={handleSearchResults}
-          />
+          <HeaderMain navMobileClbk={handleNavMobileStatus} searchClbk={handleSearchResults} />
           <SearchResults data={searchResults} />
-          <NavMobile
-            navMobileStatus={navMobileStatus}
-            navMobileClbk={handleNavMobileStatus}
-          />
+          <NavMobile navMobileStatus={navMobileStatus} navMobileClbk={handleNavMobileStatus} />
           <main id="content_main">
             <Switch>
               <Route exact path="/" component={Home} />
@@ -75,21 +66,9 @@ export default function App() {
               <Route path="/signup" component={Signup} />
               {/* check the protected route in src/auth folder */}
               <ProtectedRoute path="/dashboard" component={Dashboard} />
-              <ProtectedRoute
-                exact
-                path="/admin/:endpoint(albums|artists|labels|styles)/"
-                component={AdminTables}
-              />
-              <ProtectedRoute
-                exact
-                path="/admin/:endpoint(albums|artists|labels|styles)/:mode"
-                component={AdminForms}
-              />
-              <ProtectedRoute
-                exact
-                path="/admin/:endpoint(albums|artists|labels|styles)/:mode/:id"
-                component={AdminForms}
-              />
+              <ProtectedRoute exact path="/admin/:endpoint(albums|artists|labels|styles)/" component={AdminTables} />
+              <ProtectedRoute exact path="/admin/:endpoint(albums|artists|labels|styles)/:mode" component={AdminForms} />
+              <ProtectedRoute exact path="/admin/:endpoint(albums|artists|labels|styles)/:mode/:id" component={AdminForms} />
               <Route path="*" component={NotFound} />
             </Switch>
           </main>
@@ -98,4 +77,4 @@ export default function App() {
       )}
     </UserContext.Provider>
   );
-};
+}

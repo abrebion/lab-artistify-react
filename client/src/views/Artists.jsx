@@ -15,6 +15,7 @@ export default class Artists extends Component {
   componentDidMount() {
     apiHandler.get("/artists").then(apiRes => {
       this.setState({ artists: apiRes.data.artists });
+      console.log(apiRes.data.artists);
     });
   }
 
@@ -22,6 +23,16 @@ export default class Artists extends Component {
     return (
       <React.Fragment>
         <h1 className="title diy">D.I.Y (Artists)</h1>
+
+        {this.state.artists.length ? (
+          <div className="cards">
+            {this.state.artists.map((el, i) => (
+              <CardArtist key={i} data={el}></CardArtist>
+            ))}
+          </div>
+        ) : (
+          "No artists yet"
+        )}
         <p>
           Fetch all artists from the database.
           <br />
@@ -38,21 +49,15 @@ export default class Artists extends Component {
         <p>
           Import a custom {`<IconFavorite />`} on each artist card.
           <br />
-          When clicked, send an axios.patch request to add the artist to the
-          user's favorites.
+          When clicked, send an axios.patch request to add the artist to the user's favorites.
         </p>
-        
+
         <hr />
 
-        <LabPreview name="artists"/>
+        <LabPreview name="artists" />
 
         <h1 className="title">All artists</h1>
-        <List
-          data={this.state.artists}
-          Component={CardArtist}
-          cssList="cards"
-          cssItem="card artist"
-        />
+        <List data={this.state.artists} Component={CardArtist} cssList="cards" cssItem="card artist" />
       </React.Fragment>
     );
   }
